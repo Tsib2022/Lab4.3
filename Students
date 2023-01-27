@@ -1,0 +1,112 @@
+#include <iostream>
+#include <cstdint>
+#include <string>
+#include <algorithm>
+#include <cassert>
+ 
+char nibble_to_hex(uint8_t i) {
+  assert(0x0 <= i && i <= 0xf);
+  if (0 <= i && i < 10) {
+    return '0' + i;
+  } else {
+    return 'A' + i - 10;
+  }
+}
+ 
+void print_in_hex(uint8_t byte) {
+  std::cout << nibble_to_hex(byte >> 4);
+  std::cout << nibble_to_hex((byte & 0xF));
+}
+ 
+void print_in_binary(uint8_t byte) {
+  uint8_t mask = 1u << 7;
+  while (mask != 0) {
+    std::cout << ((byte & mask) == mask);
+    mask >>= 1;
+  }
+ 
+}
+ 
+const uint8_t* as_bytes(const void* data) {
+  return reinterpret_cast<const uint8_t*>(data);
+}
+ 
+void print_in_hex(const void* data, size_t size) {
+  const uint8_t* bytes = as_bytes(data);
+  for (size_t i = 0; i < size; ++i) {
+    print_in_hex(bytes[i]);
+    if ((i + 1) % 16 == 0) {
+      std::cout << std::endl;
+    } else {
+      std::cout << " ";
+    }
+  }
+}
+ 
+void print_in_binary(const void* data, size_t size) {
+  const uint8_t* bytes = as_bytes(data);
+  for (size_t i = 0; i < size; ++i) {
+    print_in_binary(bytes[i]);
+    if ((i + 1) % 4 == 0) {
+      std::cout << std::endl;
+    } else {
+      std::cout << " ";
+    }
+  }
+}
+ 
+ 
+struct Student {
+  char name[17]; // имя 17 байт
+  uint16_t year; // год поступления 2 байта
+  float avarage_mark; // средний балл // 4
+  uint8_t sex:1;      // пол 
+  uint8_t courses;  // пройденные курсы
+  Student* boss; // указатель на старосту 8 байт(для х64 систем)
+};
+ 
+int main() {
+  Student students[3];
+  students[0] = {
+    "Vladimir",
+    2020,
+    3.07,
+    1,
+    21,
+    &students[2]
+  };
+ 
+  students[1] = {
+    "Natasha",
+    2019,
+    4.67,
+    0,
+    16,
+    &students[2]
+  };
+ 
+  students[2] = {
+    "Sergey",
+    2020,
+    4.3,
+    1,
+    19,
+    nullptr
+  };
+ 
+  std::cout <<  sizeof(Student) << "\n";
+  std::cout << students << " " << sizeof(students) << "\n";
+  std::cout << &students[0] << " " << sizeof(students[0]) << "\n";
+  //std::cout << (uint64_t)(&students[0]) << std::endl;
+  //std::cout << (uint64_t)(&students[1]) << std::endl;
+  std::cout << &students[1] << " " << sizeof(students[1]) << "\n";
+  std::cout << &students[2] << " " << sizeof(students[2]) << "\n";
+  // отличаются на 40 все адреса - поскольку все эелементы массива лежат в памяти рядом
+  std::cout << "Offset name: " << offsetof(Student, name) << "\n";
+  std::cout << "Offset year: " << offsetof(Student, year) << "\n";
+  std::cout << "Offset avarage_mark: " << offsetof(Student, avarage_mark) << "\n";
+  std::cout << "Offset courses: " << offsetof(Student, courses) << "\n";
+  std::cout << "Offset boss: " << offsetof(Student, boss) << "\n";
+ 
+  print_in_hex(students, sizeof(students));
+}
