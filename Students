@@ -94,4 +94,19 @@ int main() {
     nullptr
   };
  
+  std::cout <<  sizeof(Student) << "\n";
+  std::cout << students << " " << sizeof(students) << "\n";
+  std::cout << &students[0] << " " << sizeof(students[0]) << "\n";
+  //std::cout << (uint64_t)(&students[0]) << std::endl;
+  //std::cout << (uint64_t)(&students[1]) << std::endl;
+  std::cout << &students[1] << " " << sizeof(students[1]) << "\n";
+  std::cout << &students[2] << " " << sizeof(students[2]) << "\n";
+  // отличаются на 40 все адреса - поскольку все эелементы массива лежат в памяти рядом
+  std::cout << "Offset name: " << offsetof(Student, name) << "\n";
+  std::cout << "Offset year: " << offsetof(Student, year) << "\n";
+  std::cout << "Offset avarage_mark: " << offsetof(Student, avarage_mark) << "\n";
+  std::cout << "Offset courses: " << offsetof(Student, courses) << "\n";
+  std::cout << "Offset boss: " << offsetof(Student, boss) << "\n";
  
+  print_in_hex(students, sizeof(students));
+}
